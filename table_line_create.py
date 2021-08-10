@@ -42,6 +42,7 @@ def table_line(img, size=(512, 512), hprob=0.5, vprob=0.5, row=50, col=30, alph=
     rowboxes = get_table_line(hpred, axis=0, lineW=row)
     ccolbox = []
     crowlbox = []
+    # 恢复尺寸
     if len(rowboxes) > 0:
         rowboxes = np.array(rowboxes)
         rowboxes[:, [0, 2]] = rowboxes[:, [0, 2]] / fx
