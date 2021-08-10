@@ -1,5 +1,5 @@
-opencv-contrib-python==4.0.0.21
-pillow
+opencv-python==4.5.3.56
+pillow==8.2.0
 h5py
 scipy
 numpy
