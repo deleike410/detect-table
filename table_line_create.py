@@ -105,17 +105,18 @@ def get_rect(intersection_points, y_max, x_max, rows, cols):
     rects = [[0] * (cols - 1) for _ in range(rows - 1)]
     for i in range(len(rects)):
         for j in range(len(rects[0])):
-            tmp = [res[i][j], res[i][j + 1], res[i + 1][j], res[i + 1][j + 1]]
+            leftdown = [v+3 if v+3 <= y_max else y_max for v in res[i + 1][j]]
+            rightdown = [v+5 if v+5 <= y_max else y_max for v in res[i + 1][j+1]]
+            tmp = [res[i][j], res[i][j + 1], leftdown, rightdown]
             rects[i][j] = tmp
 
     return rects
 
 
-if __name__ == '__main__':
-    p = 'img/成绩.png'
+def image2box(img_path):
+    p = img_path
     img = cv2.imread(p)
     t = time.time()
-
     rowboxes, colboxes, intersection_points = table_line(img[..., ::-1], size=(512, 512), hprob=0.5, vprob=0.5)
     img2 = img
     image_h, image_w = img.shape[:2]
@@ -127,8 +128,15 @@ if __name__ == '__main__':
             cv2.circle(img2, (int(p[0][0]), int(p[0][1])), radius=2, color=(0, 0, 255), thickness=2)
             cv2.circle(img2, (int(p[3][0]), int(p[3][1])), radius=2, color=(0, 0, 255), thickness=2)
 
-    cv2.imwrite('img/成绩_rect.jpg', img2, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
+    cv2.imwrite(img_path[:-4] + '_rect2.jpg', img2, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
 
     img = draw_lines(img, rowboxes + colboxes, color=(255, 0, 0), lineW=1)
     print(time.time() - t, len(rowboxes), len(colboxes))
-    cv2.imwrite('img/成绩_line.png', img)
+    cv2.imwrite(img_path[:-4] + '_line2.png', img)
+
+    return rects
+
+
+if __name__ == '__main__':
+    p = 'img/成绩.png'
+    rects = image2box(p)
