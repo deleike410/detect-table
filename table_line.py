@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Sep 9 23:11:51 2020
-table line detect
-@author: chineseocr
-"""
 
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '3'

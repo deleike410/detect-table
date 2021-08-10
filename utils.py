@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Sep 9 23:11:51 2020
-utils
-@author: chineseocr
-"""
+
 import cv2
 import numpy as np
 
 
 def nms_box(boxes, scores, score_threshold=0.5, nms_threshold=0.3):
-    ##nms box
     boxes = np.array(boxes)
     scores = np.array(scores)
     ind = scores > score_threshold
@@ -46,10 +41,7 @@ def resize_im(im, scale, max_scale=None):
 
 
 def estimate_skew_angle(raw, angleRange=[-15, 15]):
-    """
-    估计图像文字偏转角度,
-    angleRange:角度估计区间
-    """
+    # 估计图像文字偏转角度, angleRange:角度估计区间
     raw = resize_im(raw, scale=600, max_scale=900)
     image = raw - amin(raw)
     image = image / amax(image)
@@ -78,9 +70,7 @@ def estimate_skew_angle(raw, angleRange=[-15, 15]):
 
 
 def eval_angle(img, angleRange=[-5, 5]):
-    """
-    估计图片文字的偏移角度
-    """
+    # 估计图片文字的偏移角度
     im = Image.fromarray(img)
     degree = estimate_skew_angle(np.array(im.convert('L')), angleRange=angleRange)
     im = im.rotate(degree, center=(im.size[0] / 2, im.size[1] / 2), expand=1, fillcolor=(255, 255, 255))
@@ -135,8 +125,8 @@ def adjust_lines(RowsLines, ColsLines, alph=50):
     ncol = len(ColsLines)
     newRowsLines = []
     newColsLines = []
+    # 行行间
     for i in range(nrow):
-
         x1, y1, x2, y2 = RowsLines[i]
         cx1, cy1 = (x1 + x2) / 2, (y1 + y2) / 2
         for j in range(nrow):
@@ -188,9 +178,7 @@ def adjust_lines(RowsLines, ColsLines, alph=50):
 
 
 def minAreaRect(coords):
-    """
-    多边形外接矩形
-    """
+    # 多边形外接矩形
     rect = cv2.minAreaRect(coords[:, ::-1])
     box = cv2.boxPoints(rect)
     box = box.reshape((8,)).tolist()
@@ -210,8 +198,8 @@ def minAreaRect(coords):
         xmax = (x2 + x3) / 2
         ymin = (y1 + y4) / 2
         ymax = (y2 + y3) / 2
-    # degree,w,h,cx,cy = solve(box)
-    # x1,y1,x2,y2,x3,y3,x4,y4 = box
+    # degree, w, h, cx, cy = solve(box)
+    # x1, y1, x2, y2, x3, y3, x4, y4 = box
     # return {'degree':degree,'w':w,'h':h,'cx':cx,'cy':cy}
     return [xmin, ymin, xmax, ymax]
 
@@ -309,8 +297,8 @@ def solve(box):
     绕 cx,cy点 w,h 旋转 angle 的坐标
     x = cx-w/2
     y = cy-h/2
-    x1-cx = -w/2*cos(angle) +h/2*sin(angle)
-    y1 -cy= -w/2*sin(angle) -h/2*cos(angle)
+    x1-cx = -w/2*cos(angle) + h/2*sin(angle)
+    y1-cy = -w/2*sin(angle) - h/2*cos(angle)
 
     h(x1-cx) = -wh/2*cos(angle) +hh/2*sin(angle)
     w(y1 -cy)= -ww/2*sin(angle) -hw/2*cos(angle)
@@ -330,7 +318,7 @@ def solve(box):
 
 
 def xy_rotate_box(cx, cy, w, h, angle=0, degree=None, **args):
-    """
+    """绕点旋转坐标计算
     绕 cx,cy点 w,h 旋转 angle 的坐标
     x_new = (x-cx)*cos(angle) - (y-cy)*sin(angle)+cx
     y_new = (x-cx)*sin(angle) + (y-cy)*sin(angle)+cy
@@ -360,9 +348,6 @@ def rotate(x, y, angle, cx, cy):
 
 
 def minAreaRectbox(regions, flag=True, W=0, H=0, filtersmall=False, adjustBox=False):
-    """
-    多边形外接矩形
-    """
     boxes = []
     for region in regions:
         rect = cv2.minAreaRect(region.coords[:, ::-1])

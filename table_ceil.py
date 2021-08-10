@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Sep 9 23:11:51 2020
-table ceil
-@author: chineseocr
-"""
 
 import cv2
 import numpy as np
