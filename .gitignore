@@ -18,3 +18,4 @@ __pycache__
 dump.rdb
 define
 train/draw_line
+models/custom
