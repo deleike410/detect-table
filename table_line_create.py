@@ -5,6 +5,7 @@ import time
 import cv2
 from functools import reduce
 from operator import mul
+import json
 
 from config import tableModeLinePath
 from utils import letterbox_image, get_table_line, adjust_lines, line_to_line
@@ -108,7 +109,8 @@ def get_rect(intersection_points, y_max, x_max, rows, cols):
             leftdown = [res[i + 1][j][0], res[i + 1][j][1]+3 if res[i + 1][j][1]+3 <= y_max else y_max]
             rightdown = [res[i + 1][j+1][0], res[i + 1][j+1][1]+3 if res[i + 1][j+1][1]+3 <= y_max else y_max]
             tmp = [res[i][j], res[i][j + 1], leftdown, rightdown]
-            rects[i][j] = tmp
+            int_tmp = [[round(i[0]), round(i[1])] for i in tmp]
+            rects[i][j] = int_tmp
 
     return rects
 
@@ -141,6 +143,23 @@ def image2box(img_path):
     return rects
 
 
-if __name__ == '__main__':
-    p = 'img/成绩.png'
+def gene_json(p):
     rects = image2box(p)
+    # print(rects)
+    ret = {}
+    ret['image_path'] = p
+    ret['rows'] = len(rects)
+    ret['cols'] = len(rects[0])
+    ret['rectangles'] = rects
+
+    data = json.dumps(ret)
+
+    with open("/tmp/rectangles.json", "w") as f:
+        json.dump(ret, f)
+
+    return data
+
+if __name__ == '__main__':
+    p = 'img/test001.png'
+    data = gene_json(p)
+    #print(data)

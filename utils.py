@@ -45,13 +45,17 @@ def estimate_skew_angle(raw, angleRange=[-15, 15]):
     raw = resize_im(raw, scale=600, max_scale=900)
     image = raw - amin(raw)
     image = image / amax(image)
+
+    # downsampled by a factor of 0.5 with default interpolation
     m = interpolation.zoom(image, 0.5)
+    # 滤波后还原size
     m = filters.percentile_filter(m, 80, size=(20, 2))
     m = filters.percentile_filter(m, 80, size=(2, 20))
     m = interpolation.zoom(m, 1.0 / 0.5)
-    # w,h = image.shape[1],image.shape[0]
+
+    # w, h = image.shape[1], image.shape[0]
     w, h = min(image.shape[1], m.shape[1]), min(image.shape[0], m.shape[0])
-    flat = np.clip(image[:h, :w] - m[:h, :w] + 1, 0, 1)
+    flat = np.clip(image[:h, :w] - m[:h, :w] + 1, 0, 1)  # 二值化
     d0, d1 = flat.shape
     o0, o1 = int(0.1 * d0), int(0.1 * d1)
     flat = amax(flat) - flat

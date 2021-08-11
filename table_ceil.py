@@ -5,8 +5,9 @@ import cv2
 import numpy as np
 from table_detect import table_detect
 from table_line import table_line
-from table_build import tableBuid,to_excel
+from table_build import tableBuid, to_excel
 from utils import minAreaRectbox, measure, eval_angle, draw_lines
+
 
 class table:
     def __init__(self, img, tableSize=(416, 416), tableLineSize=(1024, 1024), isTableDetect=False, isToExcel=False):
@@ -69,19 +70,17 @@ class table:
         tablebuild = tableBuid(self.tableCeilBoxes)
         cor = tablebuild.cor
         for line in cor:
-            line['text'] = 'table-test'##ocr
+            line['text'] = 'table-test'  # ocr
         if self.isToExcel:
             workbook = to_excel(cor, workbook=None)
         else:
-            workbook=None
+            workbook = None
         self.res = cor
         self.workbook = workbook
-
 
     def table_ocr(self):
         """use ocr and match ceil"""
         pass
-
 
 
 if __name__ == '__main__':
@@ -95,26 +94,26 @@ if __name__ == '__main__':
     parser.add_argument('--tableSize', default='416,416', type=str, help="表格检测输入size")
     parser.add_argument('--tableLineSize', default='1024,1024', type=str, help="表格直线输入size")
     parser.add_argument('--isToExcel', default=False, type=bool, help="是否输出到excel")
-    parser.add_argument('--jpgPath', default='img/table-detect.jpg',type=str, help="测试图像地址")
+    parser.add_argument('--jpgPath', default='img/table-detect.jpg', type=str, help="测试图像地址")
     args = parser.parse_args()
     args.tableSize = [int(x) for x in args.tableSize.split(',')]
     args.tableLineSize = [int(x) for x in args.tableLineSize.split(',')]
     print(args)
     img = cv2.imread(args.jpgPath)
     t = time.time()
-    tableDetect = table(img,tableSize=args.tableSize,
+    tableDetect = table(img, tableSize=args.tableSize,
                         tableLineSize=args.tableLineSize,
                         isTableDetect=args.isTableDetect,
                         isToExcel=args.isToExcel
                         )
     tableCeilBoxes = tableDetect.tableCeilBoxes
     tableJson = tableDetect.res
-    workbook =  tableDetect.workbook
+    workbook = tableDetect.workbook
     img = tableDetect.img
     tmp = np.zeros_like(img)
     img = draw_boxes(tmp, tableDetect.tableCeilBoxes, color=(255, 255, 255))
     print(time.time() - t)
-    pngP = os.path.splitext(args.jpgPath)[0]+'ceil.png'
+    pngP = os.path.splitext(args.jpgPath)[0] + 'ceil.png'
     cv2.imwrite(pngP, img)
     if workbook is not None:
-        workbook.save(os.path.splitext(args.jpgPath)[0]+'.xlsx')
+        workbook.save(os.path.splitext(args.jpgPath)[0] + '.xlsx')
