@@ -105,8 +105,8 @@ def get_rect(intersection_points, y_max, x_max, rows, cols):
     rects = [[0] * (cols - 1) for _ in range(rows - 1)]
     for i in range(len(rects)):
         for j in range(len(rects[0])):
-            leftdown = [v+3 if v+3 <= y_max else y_max for v in res[i + 1][j]]
-            rightdown = [v+5 if v+5 <= y_max else y_max for v in res[i + 1][j+1]]
+            leftdown = [res[i + 1][j][0], res[i + 1][j][1]+3 if res[i + 1][j][1]+3 <= y_max else y_max]
+            rightdown = [res[i + 1][j+1][0], res[i + 1][j+1][1]+3 if res[i + 1][j+1][1]+3 <= y_max else y_max]
             tmp = [res[i][j], res[i][j + 1], leftdown, rightdown]
             rects[i][j] = tmp
 
@@ -122,9 +122,13 @@ def image2box(img_path):
     image_h, image_w = img.shape[:2]
     rects = get_rect(intersection_points, image_h, image_w, len(rowboxes), len(colboxes))
 
-    for rec in rects:
+    for k, rec in enumerate(rects):
         for p in rec:
-            cv2.rectangle(img2, (int(p[0][0]), int(p[0][1])), (int(p[3][0]), int(p[3][1])), (0, 255, 0), 1)
+            if k % 2 == 0:
+                cv2.rectangle(img2, (int(p[0][0]), int(p[0][1])), (int(p[3][0]), int(p[3][1])), (0, 255, 0), 1)
+            else:
+                cv2.rectangle(img2, (int(p[0][0]), int(p[0][1])), (int(p[3][0]), int(p[3][1])), (255, 0, 0), 1)
+
             cv2.circle(img2, (int(p[0][0]), int(p[0][1])), radius=2, color=(0, 0, 255), thickness=2)
             cv2.circle(img2, (int(p[3][0]), int(p[3][1])), radius=2, color=(0, 0, 255), thickness=2)
 
