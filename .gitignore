@@ -17,5 +17,5 @@ buil
 __pycache__
 dump.rdb
 define
-train/draw_line
+train/draw_line/images/*.jpg
 models/custom
